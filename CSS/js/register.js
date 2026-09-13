@@ -3,16 +3,26 @@ import { createUserWithEmailAndPassword } from "https://www.gstatic.com/firebase
 import { doc, setDoc } from "https://www.gstatic.com/firebasejs/12.9.0/firebase-firestore.js";
 
 document.getElementById("registerBtn").onclick = async () => {
-  const name = document.getElementById("name").value;
-  const email = document.getElementById("email").value;
-  const password = document.getElementById("password").value;
+    const name = document.getElementById("name").value;
+    const email = document.getElementById("email").value;
+    const password = document.getElementById("password").value;
 
-  const user = await createUserWithEmailAndPassword(auth, email, password);
+    try {
+        const userCredential = await createUserWithEmailAndPassword(
+            auth,
+            email,
+            password
+        );
 
-  await setDoc(doc(db, "students", user.user.uid), {
-    name,
-    email
-  });
+        const user = userCredential.user;
 
-  alert("Registration Successful!");
+        await setDoc(doc(db, "students", user.uid), {
+            name: name,
+            email: email
+        });
+
+        alert("Registration Successful!");
+    } catch (error) {
+        alert("Registration failed: " + error.message);
+    }
 };
